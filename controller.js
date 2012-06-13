@@ -30,44 +30,6 @@ module.exports = function (mvc, app, request, response) {
         }
     };
 
-    this._render = function () {
-        return response.render(request.params.controller + '/' + request.params.action, this._locals());
-    }
-
-    this._json = function () {
-        return response.json(response.locals());
-    }
-
-    this._jsonp = function () {
-        return response.send(request.query.callback + '(' + JSON.stringify(response.locals()) + ');');
-    }
-
-    this._xml = function () {
-        return response.send(require('mvc/xml').XML.stringify(response.locals()));
-    }
-
-    this._output = function () {
-        if (this._formats.length) {
-            for (var i in this._formats) {
-                if (request.is(this._formats[i])) {
-                    if (this._formats[i] == 'html') {
-                        this._render();
-                    } else if (this._formats[i] == 'json') {
-                        response._json();
-                    } else if (this._formats[i] == 'javascript') {
-                        response._jsonp();
-                    } else if (this._formats[i] == 'xml') {
-                        response._xml();
-                    }
-                    break;
-                }
-            }
-            response.end();
-        } else {
-            this._render();
-        }
-    }
-
     this._model = function (modelName, moduleName) {
         if (moduleName == undefined) {
             moduleName = request.params.module;

@@ -67,43 +67,43 @@ module.exports.init = function(app) {
 
     //load models and controllers;
 
-    app.all('/:module?/:controller?/:action?', function(req, res, next) {
-        req.params.module = req.param('module', app.set('defaultModule'));
-        req.params.controller = req.param('controller', app.set('defaultController'));
-        req.params.action = req.param('action', app.set('defaultAction'));
+    app.all('/:module?/:controller?/:action?', function(request, response, next) {
+        request.params.module = request.param('module', app.set('defaultModule'));
+        request.params.controller = request.param('controller', app.set('defaultController'));
+        request.params.action = request.param('action', app.set('defaultAction'));
 
-        if (module.exports.controllers[req.params.module] == undefined) {
-            req.params.controller = req.params.module;
-            req.params.module = app.set('defaultModule');
+        if (module.exports.controllers[request.params.module] == undefined) {
+            request.params.controller = request.params.module;
+            request.params.module = app.set('defaultModule');
         }
 
-        //res.end(util.inspect(req.params));return;
+        //res.end(util.inspect(request.params));return;
 
-        if (module.exports.controllers[req.params.module] == undefined || module.exports.controllers[req.params.module][req.params.controller] == undefined) {
+        if (module.exports.controllers[request.params.module] == undefined || module.exports.controllers[request.params.module][request.params.controller] == undefined) {
             next();
             return;
         }
 
-        var controller = new module.exports.controllers[req.params.module][req.params.controller]();
+        var controller = new module.exports.controllers[request.params.module][request.params.controller]();
 
-        if (controller[req.params.action + 'Action'] == undefined) {
+        if (controller[request.params.action + 'Action'] == undefined) {
             next();
             return;
         }
 
         //var path = require('path');
 
-        if (req.params.module == app.set('defaultModule')) {
+        if (request.params.module == app.set('defaultModule')) {
             app.set('views', process.cwd() + path.join(app.set('applicationDirectory'), app.set('viewDirectory')));
         } else {
-            app.set('views', process.cwd() + path.join(app.set('applicationDirectory'), app.set('moduleDirectory'), req.params.module, app.set('viewDirectory')));
+            app.set('views', process.cwd() + path.join(app.set('applicationDirectory'), app.set('moduleDirectory'), request.params.module, app.set('viewDirectory')));
         }
 
         //console.log(app.set('views'));
 
         try {
             var helper = require('mvc/controller');
-            helper = new helper(module.exports, module.exports.app, req, res);
+            helper = new helper(module.exports, module.exports.app, request, response);
             for (var i in helper) {
                 controller[i] = helper[i];
             }
@@ -116,26 +116,60 @@ module.exports.init = function(app) {
                 controller.before();
             }
 
-            controller[req.params.action + 'Action']();
+            controller[request.params.action + 'Action']();
 
             //console.log(controller.asd);
-            //res.render(req.params.controller + '/' + req.params.action, controller._view);
+            //res.render(request.params.controller + '/' + request.params.action, controller._view);
 
             if (controller.after != undefined) {
                 controller.after();
             }
 
-            controller._output();
+            var _render = function () {
+                return response.render(request.params.controller + '/' + request.params.action, controller._locals());
+            }
+
+            var _json = function () {
+                return response.json(response.locals());
+            }
+
+            var _jsonp = function () {
+                return response.send(request.query.callback + '(' + JSON.stringify(response.locals()) + ');');
+            }
+
+            var _xml = function () {
+                return response.send(require('mvc/xml').XML.stringify(response.locals()));
+            }
+
+            if (controller._formats.length) {
+                for (var i in controller._formats) {
+                    if (request.is(controller._formats[i])) {
+                        if (controller._formats[i] == 'html') {
+                            _render();
+                        } else if (controller._formats[i] == 'json') {
+                            _json();
+                        } else if (controller._formats[i] == 'javascript') {
+                            _jsonp();
+                        } else if (controller._formats[i] == 'xml') {
+                            _xml();
+                        }
+                        break;
+                    }
+                }
+                response.end();
+            } else {
+                _render();
+            }
 
             //res.end();
 
-            //console.log(util.inspect(req.params));
+            //console.log(util.inspect(request.params));
 
 
             //require('/var/www/mrzjs/eval2.js');
         } catch(e) {
             console.log(e.stack.toString());
-            res.end(e.stack.toString());
+            response.end(e.stack.toString());
         }
         //console.log('Server running at http://127.0.0.1:8124/');
     });
