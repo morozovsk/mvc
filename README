@@ -1,7 +1,8 @@
 This is light weight mvc framework for express on node.js
 
-smaples of application structure:
-1) without modules
+samples of application structure:
+
+<b>without modules</b>
 app/
 -controllers/
 --index.js
@@ -11,7 +12,8 @@ app/
 --layout.ejs
 --index/
 ---index.ejs
-2) with modules
+
+<b>with modules</b>
 app/
 -controllers/
 --index.js
