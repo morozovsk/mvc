@@ -57,14 +57,14 @@ module.exports = function (mvc, app, request, response) {
 
     this._model = function (modelName, moduleName) {
         if (moduleName == undefined) {
-            moduleName = app.set('defaultModule');
+            moduleName = request.params.module;
         }
 
         if (mvc.models[moduleName] == undefined || mvc.models[moduleName][modelName] == undefined) {
             throw new Error('Model ' + modelName + ' does not exist in module ' + moduleName);
         }
 
-        return mvc.models[moduleName][modelName];
+        return new mvc.models[moduleName][modelName]();
     }
 
     this._queryParam = function (name, defaultValue) {

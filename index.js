@@ -125,7 +125,7 @@ module.exports.init = function(app) {
                 controller.after();
             }
 
-            //controller._output();
+            controller._output();
 
             //res.end();
 
