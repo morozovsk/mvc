@@ -10,27 +10,40 @@ module.exports = function (mvc, app, request, response) {
     this._redirect = response.redirect;
 
     this._formats = [];
-    this._view = {};
     this._template = null;
     this._layout = null;
 
-    this._local = response.local;
-    this._locals = response.locals;
+    this._local = function(name, val){
+        this.locals = this.locals || {};
+        return undefined === val
+            ? this.locals[name]
+            : this.locals[name] = val;
+    };
+
+    this._locals = this.helpers = function(obj){
+        if (obj) {
+            for (var key in obj) {
+                this.local(key, obj[key]);
+            }
+        } else {
+            return this.locals;
+        }
+    };
 
     this._render = function () {
-        return response.render(request.params.controller + '/' + request.params.action, this._view);
+        return response.render(request.params.controller + '/' + request.params.action, this._locals());
     }
 
     this._json = function () {
-        return response.json(this._view);
+        return response.json(response.locals());
     }
 
     this._jsonp = function () {
-        return response.send(request.query.callback + '(' + JSON.stringify(this._view) + ');');
+        return response.send(request.query.callback + '(' + JSON.stringify(response.locals()) + ');');
     }
 
     this._xml = function () {
-        return response.send(require('mvc/xml').XML.stringify(this._view));
+        return response.send(require('mvc/xml').XML.stringify(response.locals()));
     }
 
     this._output = function () {
