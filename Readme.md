@@ -50,4 +50,4 @@ You can use helpers in your controllers:
     this._local - link to response._local
     this._locals - link to response._locals
     this._queryParam(name, defaultValue) - method for request.query like request.param
-    this._url(params) - method for generate url from object (simle: this._url({controller:message, action:"edit", id: 5}) => '/message/edit?id=5')
+    this._url(params) - method for generate url from object (example: this._url({controller:"message", action:"edit", id: 5}) => '/message/edit?id=5')
