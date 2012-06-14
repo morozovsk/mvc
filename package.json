@@ -5,7 +5,10 @@
   "homepage": "https://github.com/morozovsk/mvc",
   "repository": "https://github.com/morozovsk/mvc",
   "author": "morozovsk <morozovsk@gmail.com> (https://github.com/morozovsk)",
-  "engines": {
-    "node": "*"
+  "keywords": ["mvc", "zf", "zend", "php", "express", "expressjs", "framework", "sinatra", "web", "rest", "restful", "router"],
+  "engines": { "node": "*" },
+  "dependencies": {
+    "express": "*",
+    "ejs": "*"
   }
 }
