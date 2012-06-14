@@ -1,4 +1,5 @@
 This is light weight mvc framework for express on node.js
+This mvc framework like ZendFramework on php
 
 samples of application structure:
 
@@ -51,3 +52,16 @@ You can use helpers in your controllers:
     this._locals - link to response._locals
     this._queryParam(name, defaultValue) - method for request.query like request.param
     this._url(params) - method for generate url from object (example: this._url({controller:"message", action:"edit", id: 5}) => '/message/edit?id=5')
+
+routes:
+
+    /controller
+    /controller/action
+    /controller/action?param1=value1&param2=value2
+    /controller?param1=value1&param2=value2
+    /module/controller
+    /module/controller/action
+    /module/controller/action?param1=value1&param2=value2
+    /module/controller?param1=value1&param2=value2
+    /module?param1=value1&param2=value2
+    /?param1=value1&param2=value2
