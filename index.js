@@ -3,6 +3,15 @@ module.exports.controllers = {}
 module.exports.models = {}
 
 module.exports.init = function(app) {
+    if (app.set('applicationDirectory') === undefined) app.set('applicationDirectory', '/app/');
+    if (app.set('moduleDirectory') === undefined) app.set('moduleDirectory', '/modules/');
+    if (app.set('controllerDirectory') === undefined) app.set('controllerDirectory', '/controllers/');
+    if (app.set('modelDirectory') === undefined) app.set('modelDirectory', '/models/');
+    if (app.set('viewDirectory') === undefined) app.set('viewDirectory', '/views/');
+    if (app.set('defaultModule') === undefined) app.set('defaultModule', 'index');
+    if (app.set('defaultController') === undefined) app.set('defaultController', 'index');
+    if (app.set('defaultAction') === undefined) app.set('defaultAction', 'index');
+
     module.exports.app = app;
     var util = require('util');
     var path = require('path');
@@ -126,7 +135,7 @@ module.exports.init = function(app) {
             }
 
             var _render = function () {
-                return response.render(request.params.controller + '/' + request.params.action, controller._locals());
+                return response.render(path.join(request.params.controller, request.params.action), controller._locals());
             }
 
             var _json = function () {

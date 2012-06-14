@@ -16,10 +16,10 @@ app.configure(function(){
     app.set('moduleDirectory', '/modules/');
     app.set('controllerDirectory', '/controllers/');
     app.set('modelDirectory', '/models/');
+    app.set('viewDirectory', '/views/');
     app.set('defaultModule', 'index');
     app.set('defaultController', 'index');
     app.set('defaultAction', 'index');
-    app.set('viewDirectory', '/views/');
     app.use(express.bodyParser());
     app.use(express.cookieParser('secret'));
     app.use(express.session({secret: 'secret'}));
