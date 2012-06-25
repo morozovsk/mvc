@@ -1,11 +1,11 @@
 {
   "name": "mvc",
-  "description": "mvc for expess",
-  "version": "0.0.3",
+  "description": "mvc wrapper for express like Zend framework on php",
+  "version": "0.0.4",
   "homepage": "https://github.com/morozovsk/mvc",
   "repository": "https://github.com/morozovsk/mvc",
   "author": "morozovsk <morozovsk@gmail.com> (https://github.com/morozovsk)",
-  "keywords": ["mvc", "express", "expressjs", "connect", "framework", "zf", "zend", "php"],
+  "keywords": ["mvc", "express", "expressjs", "connect", "framework", "zf", "zend", "zendframework", "php"],
   "engines": { "node": "*" },
   "dependencies": {
     "express": "*"

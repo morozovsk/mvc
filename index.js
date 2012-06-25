@@ -1,16 +1,33 @@
 module.exports.app = {}
 module.exports.controllers = {}
 module.exports.models = {}
+module.exports.settings = {}
 
-module.exports.init = function(app) {
-    if (app.set('applicationDirectory') === undefined) app.set('applicationDirectory', '/app/');
-    if (app.set('moduleDirectory') === undefined) app.set('moduleDirectory', '/modules/');
-    if (app.set('controllerDirectory') === undefined) app.set('controllerDirectory', '/controllers/');
-    if (app.set('modelDirectory') === undefined) app.set('modelDirectory', '/models/');
-    if (app.set('viewDirectory') === undefined) app.set('viewDirectory', '/views/');
-    if (app.set('defaultModule') === undefined) app.set('defaultModule', 'index');
-    if (app.set('defaultController') === undefined) app.set('defaultController', 'index');
-    if (app.set('defaultAction') === undefined) app.set('defaultAction', 'index');
+module.exports.init = function(app, settings) {
+    var defaultSettings = {
+        applicationDirectory: 'app',
+        moduleDirectory: 'modules',
+        controllerDirectory: 'controllers',
+        modelDirectory: 'models',
+        defaultModule: 'index',
+        defaultController: 'index',
+        defaultAction: 'index',
+        viewDirectory: 'views',
+        controllerCache: true,
+        modelCache: true
+    }
+
+    if (settings === undefined) {
+        settings = defaultSettings;
+    } else {
+        for (var i in defaultSettings) {
+            if (settings[i] === undefined) {
+                settings[i] = defaultSettings[i];
+            }
+        }
+    }
+
+    module.exports.settings = settings;
 
     module.exports.app = app;
     var util = require('util');
@@ -19,7 +36,7 @@ module.exports.init = function(app) {
 
     var loadModule = function (modulePath, moduleName) {
         var loadComponents = function (type) {
-            var componentsPath = path.join(modulePath, app.set(type + 'Directory'));
+            var componentsPath = path.join(modulePath, settings[type + 'Directory']);
             //console.log(componentsPath);
             module.exports[type + 's'][moduleName] = {};
 
@@ -43,6 +60,17 @@ module.exports.init = function(app) {
                     var component = require(componentPath);
 
                     module.exports[type +'s'][moduleName][componentName] = component;
+
+                    if ((type == 'controller' && !settings['controllerCache']) || (type == 'model' && !app.settings['modelCache'])) {
+                        fs.watchFile(componentPath, function(event, filename) {
+                            try {
+                                delete(require.cache[componentPath]);
+                                module.exports[type +'s'][moduleName][componentName] = require(componentPath);
+                            } catch (e){
+                                //console.log(e.stack.toString());
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -51,11 +79,11 @@ module.exports.init = function(app) {
         loadComponents('model');
     }
 
-    var appPath = path.join(process.cwd() ,app.set('applicationDirectory'));
+    var appPath = path.join(process.cwd(), settings.applicationDirectory);
 
-    loadModule(appPath, app.set('defaultModule'));
+    loadModule(appPath, settings.defaultModule);
 
-    var modulesPath = path.join(process.cwd(), app.set('applicationDirectory'), app.set('moduleDirectory'));
+    var modulesPath = path.join(process.cwd(), settings.applicationDirectory, settings.moduleDirectory);
 
     //console.log(util.inspect(module.exports));
 
@@ -77,13 +105,13 @@ module.exports.init = function(app) {
     //load models and controllers;
 
     app.all('/:module?/:controller?/:action?', function(request, response, next) {
-        request.params.module = request.param('module', app.set('defaultModule'));
-        request.params.controller = request.param('controller', app.set('defaultController'));
-        request.params.action = request.param('action', app.set('defaultAction'));
+        request.params.module = request.param('module', settings.defaultModule);
+        request.params.controller = request.param('controller', settings.defaultController);
+        request.params.action = request.param('action', settings.defaultAction);
 
         if (module.exports.controllers[request.params.module] == undefined) {
             request.params.controller = request.params.module;
-            request.params.module = app.set('defaultModule');
+            request.params.module = settings.defaultModule;
         }
 
         //res.end(util.inspect(request.params));return;
@@ -102,17 +130,17 @@ module.exports.init = function(app) {
 
         //var path = require('path');
 
-        if (request.params.module == app.set('defaultModule')) {
-            app.set('views', process.cwd() + path.join(app.set('applicationDirectory'), app.set('viewDirectory')));
+        if (request.params.module == settings.defaultModule) {
+            app.set('views', path.join(process.cwd(), settings.applicationDirectory, settings.viewDirectory));
         } else {
-            app.set('views', process.cwd() + path.join(app.set('applicationDirectory'), app.set('moduleDirectory'), request.params.module, app.set('viewDirectory')));
+            app.set('views', path.join(process.cwd(), settings.applicationDirectory, settings.moduleDirectory, request.params.module, settings.viewDirectory));
         }
 
         //console.log(app.set('views'));
 
         try {
             var helper = require('mvc/controller');
-            helper = new helper(module.exports, module.exports.app, request, response);
+            helper = new helper(module.exports, module.exports.app, request, response, settings);
             for (var i in helper) {
                 controller[i] = helper[i];
             }

@@ -12,14 +12,6 @@ app.configure(function(){
     app.set('view options', {complexNames: true});
     app.set('jsDirectory', '/js/');
     app.set('cssDirectory', '/css/');
-    app.set('applicationDirectory', '/app/');
-    app.set('moduleDirectory', '/modules/');
-    app.set('controllerDirectory', '/controllers/');
-    app.set('modelDirectory', '/models/');
-    app.set('viewDirectory', '/views/');
-    app.set('defaultModule', 'index');
-    app.set('defaultController', 'index');
-    app.set('defaultAction', 'index');
     app.use(express.bodyParser());
     app.use(express.cookieParser('secret'));
     app.use(express.session({secret: 'secret'}));
@@ -29,7 +21,14 @@ app.configure(function(){
     app.use(app.router);
 });
 
-require('mvc').init(app);
+require('mvc').init(app, {
+    applicationDirectory: 'app',
+    controllerDirectory: 'controllers',
+    modelDirectory: 'models',
+    defaultController: 'index',
+    defaultAction: 'index',
+    viewDirectory: 'views'
+});
 
 app.all('*', function(req, res) {
     res.send('errror 404', 404);

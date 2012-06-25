@@ -1,4 +1,4 @@
-module.exports = function (mvc, app, request, response) {
+module.exports = function (mvc, app, request, response, settings) {
     this._app = app;
     this._request = request;
     this._response = response;
@@ -51,14 +51,14 @@ module.exports = function (mvc, app, request, response) {
     this._url = function (params) {
         var url = '/';
 
-        if (params.module !== undefined && params.module !== app.set('defaultModule') || params.controller !== undefined && params.controller !== app.set('defaultController') || params.action !== undefined && params.action !== app.set('defaultController')) {
-            url += (params.module == undefined ? app.set('defaultModule') : params.module);
+        if (params.module !== undefined && params.module !== settings.defaultModule || params.controller !== undefined && params.controller !== settings.defaultController || params.action !== undefined && params.action !== settings.defaultController) {
+            url += (params.module == undefined ? settings.defaultModule : params.module);
 
-            if (params.controller !== undefined && params.controller !== app.set('defaultController') || params.action !== undefined && params.action !== app.set('defaultController')) {
-                url += '/' + (params.controller == undefined ? app.set('defaultController') : params.controller);
+            if (params.controller !== undefined && params.controller !== settings.defaultController || params.action !== undefined && params.action !== settings.defaultController) {
+                url += '/' + (params.controller == undefined ? settings.defaultController : params.controller);
 
-                if (params.action !== undefined && params.action !== app.set('defaultController')) {
-                    url += '/' + (params.action ? app.set('defaultAction') : params.action);
+                if (params.action !== undefined && params.action !== settings.defaultController) {
+                    url += '/' + (params.action ? settings.defaultAction : params.action);
                 }
             }
         }
