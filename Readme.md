@@ -58,6 +58,7 @@ You can use helpers in your controllers:
     this._url(params) - method for generate url from object (example: this._url({controller:"message", action:"edit", id: 5}) => '/message/edit?id=5')
 
 routes:
+
     /
     /controller
     /controller/action
