@@ -1,5 +1,9 @@
-This is light weight mvc framework for express on node.js
-This mvc framework like ZendFramework on php
+This is light weight mvc layer for express on node.js
+This mvc framework like ZendFramework (php)
+
+###installation
+
+    npm install mvc
 
 samples of application structure:
 
