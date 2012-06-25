@@ -5,7 +5,7 @@ This mvc framework like ZendFramework (php)
 
     npm install mvc
 
-samples of application structure:
+##samples of application structure:
 
 ###without modules (https://github.com/morozovsk/mvc/tree/master/samples/sample-without-modules)
 
@@ -58,7 +58,7 @@ You can use helpers in your controllers:
     this._url(params) - method for generate url from object (example: this._url({controller:"message", action:"edit", id: 5}) => '/message/edit?id=5')
 
 routes:
-
+    /
     /controller
     /controller/action
     /controller/action?param1=value1&param2=value2
