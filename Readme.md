@@ -1,5 +1,7 @@
 This is light weight mvc wrapper for express on node.js inspired by Zend Framework on php.
 
+This framework reload modules, controllers and models automatically when they are changed without restart.
+
 ###installation
 
     npm install mvc
